@@ -1,4 +1,4 @@
-﻿namespace HierarchicalMediators
+﻿namespace HierarchicalMediators.Interfaces
 {
     public interface IEventArgs { }
 }
