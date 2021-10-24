@@ -4,6 +4,8 @@
         <TargetFramework>net5.0</TargetFramework>
 
         <IsPackable>false</IsPackable>
+
+        <RootNamespace>HierarchicalBrokerTests</RootNamespace>
     </PropertyGroup>
 
     <ItemGroup>
@@ -14,7 +16,7 @@
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\HierarchicalMediators\HierarchicalMediators.csproj" />
+      <ProjectReference Include="..\HerarchicalBroker\HerarchicalBroker.csproj" />
     </ItemGroup>
 
 </Project>

@@ -2,8 +2,9 @@
 
     <PropertyGroup>
         <TargetFramework>net5.0</TargetFramework>
-        <RootNamespace>HierachicalMediators</RootNamespace>
+        <RootNamespace>HierachicalBroker</RootNamespace>
         <Nullable>enable</Nullable>
+        <LangVersion>8</LangVersion>
     </PropertyGroup>
 
 </Project>

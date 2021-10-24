@@ -1,14 +1,15 @@
 ﻿using System;
-using HierarchicalMediators.Interfaces;
+using HierarchicalBroker.Interfaces;
 
-namespace HierachicalMediators
+namespace HierarchicalBroker
 {
     internal class Subscription<T> : IDisposable
     {
         private T element;
         private IUnsubscriptable<T> owner;
         private bool disposed = false;
-        internal Subscription(IUnsubscriptable<T> owner, T element)
+
+        public Subscription(IUnsubscriptable<T> owner, T element)
         {
             this.element = element;
             this.owner = owner;
