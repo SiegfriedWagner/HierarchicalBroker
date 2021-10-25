@@ -12,22 +12,22 @@ namespace HierarchicalBroker
     {
         static Broker()
         {
-            logger = null;
+            Logger = null;
             foreach (var attr in typeof(T).GetCustomAttributes())
             {
                 if (attr is BrokerLogger mediatorLoggingAttribute)
                 {
                     if (mediatorLoggingAttribute.LoggerType.IsAssignableTo(typeof(IBrokerLogger<T>)))
                     {
-                        logger = Activator.CreateInstance(mediatorLoggingAttribute.LoggerType) as IBrokerLogger<T>;
-                        _loggedEvents = mediatorLoggingAttribute.LoggedEvents;
+                        Logger = Activator.CreateInstance(mediatorLoggingAttribute.LoggerType) as IBrokerLogger<T>;
+                        LoggedEvents = mediatorLoggingAttribute.LoggedEvents;
                     }
                 }
             }
         }                                     
 
-        internal static IBrokerLogger<T>? logger;
-        internal static LoggedEvents _loggedEvents = LoggedEvents.None;
+        internal static readonly IBrokerLogger<T>? Logger;
+        internal static readonly LoggedEvents LoggedEvents = LoggedEvents.None;
         private object parent;
         private WeakReference<BeforeBroker<T>> before = new WeakReference<BeforeBroker<T>>(null);
         private WeakReference<Broker<T>> after = new WeakReference<Broker<T>>(null);
@@ -41,8 +41,8 @@ namespace HierarchicalBroker
         }
         IDisposable IBroker<T>.Subscribe(IBroker<T>.Delegate @delegate)
         {
-            if ((_loggedEvents & LoggedEvents.Subscribe) == LoggedEvents.Subscribe)
-                logger?.LogSubscribe(identifier, @delegate);
+            if ((LoggedEvents & LoggedEvents.Subscribe) == LoggedEvents.Subscribe)
+                Logger?.LogSubscribe(identifier, @delegate);
             subscribers += @delegate;
             return new Subscription<IBroker<T>.Delegate>(this, @delegate);
         }
@@ -84,8 +84,8 @@ namespace HierarchicalBroker
         public static IBroker<T> After => ((IBroker<T>) root).After;
         public static void Invoke(object sender, T args)
         {
-            if ((_loggedEvents & LoggedEvents.Invoke) == LoggedEvents.Invoke)
-                logger?.LogInvoke(root.identifier, sender, in args);
+            if ((LoggedEvents & LoggedEvents.Invoke) == LoggedEvents.Invoke)
+                Logger?.LogInvoke(root.identifier, sender, in args);
             root.InvokeInternal(sender, in args); 
         }
 
@@ -105,8 +105,8 @@ namespace HierarchicalBroker
 
         void IUnsubscriptable<IBroker<T>.Delegate>.Unsubscribe(IBroker<T>.Delegate listener)
         {
-            if ((_loggedEvents & LoggedEvents.Unsubscribe) == LoggedEvents.Unsubscribe)
-                logger?.LogUnsubscribe(identifier, listener);
+            if ((LoggedEvents & LoggedEvents.Unsubscribe) == LoggedEvents.Unsubscribe)
+                Logger?.LogUnsubscribe(identifier, listener);
             subscribers -= listener;
         }
     }

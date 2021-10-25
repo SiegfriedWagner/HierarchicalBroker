@@ -21,8 +21,8 @@ namespace HierarchicalBroker
 
         public IDisposable Subscribe(IBeforeBroker<T>.Delegate @delegate)
         {
-            if ((Broker<T>._loggedEvents & LoggedEvents.Subscribe) == LoggedEvents.Subscribe)
-                Broker<T>.logger?.LogSubscribe(identifier, @delegate);
+            if ((Broker<T>.LoggedEvents & LoggedEvents.Subscribe) == LoggedEvents.Subscribe)
+                Broker<T>.Logger?.LogSubscribe(identifier, @delegate);
             subscribers += @delegate;
             return new Subscription<IBeforeBroker<T>.Delegate>(this, @delegate);
         }
@@ -71,8 +71,8 @@ namespace HierarchicalBroker
             subscribers?.Invoke(sender, in args, ref cancel);
             if (cancel)
             {
-                if ((Broker<T>._loggedEvents & LoggedEvents.CancelInvoke) == LoggedEvents.CancelInvoke)
-                    Broker<T>.logger?.LogCancelInvoke(identifier, sender, in args, subscribers);
+                if ((Broker<T>.LoggedEvents & LoggedEvents.CancelInvoke) == LoggedEvents.CancelInvoke)
+                    Broker<T>.Logger?.LogCancelInvoke(identifier, sender, in args, subscribers);
                 return;
             }
             if (after.TryGetTarget(out var afterBroker))
@@ -81,8 +81,8 @@ namespace HierarchicalBroker
 
         void IUnsubscriptable<IBeforeBroker<T>.Delegate>.Unsubscribe(IBeforeBroker<T>.Delegate @delegate)
         {
-            if ((Broker<T>._loggedEvents & LoggedEvents.Unsubscribe) == LoggedEvents.Unsubscribe)
-                Broker<T>.logger?.LogUnsubscribe(identifier, @delegate);
+            if ((Broker<T>.LoggedEvents & LoggedEvents.Unsubscribe) == LoggedEvents.Unsubscribe)
+                Broker<T>.Logger?.LogUnsubscribe(identifier, @delegate);
             subscribers -= @delegate;
         }
     }
