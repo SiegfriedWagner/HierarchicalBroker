@@ -7,7 +7,7 @@ using HierarchicalBroker.Interfaces;
 namespace HierarchicalBroker
 {
 
-    public sealed class Broker<T> : IBroker<T>, IBrokerInternal<T>, IUnsubscriptable<IBroker<T>.Delegate>
+    public sealed class Broker<T> : IBroker<T>, IUnsubscriptable<IBroker<T>.Delegate>
         where T : IEventArgs
     {
         static Broker()
@@ -86,10 +86,10 @@ namespace HierarchicalBroker
         {
             if ((_loggedEvents & LoggedEvents.Invoke) == LoggedEvents.Invoke)
                 logger?.LogInvoke(root.identifier, sender, in args);
-            ((IBrokerInternal<T>) root).Invoke(sender, in args); 
+            root.InvokeInternal(sender, in args); 
         }
 
-        void IBrokerInternal<T>.Invoke(object sender, in T args)
+        public void InvokeInternal(object sender, in T args)
         {
             if (before.TryGetTarget(out var beforeBroker))
             {
@@ -100,7 +100,7 @@ namespace HierarchicalBroker
             }
             subscribers?.Invoke(sender, in args);
             if (after.TryGetTarget(out var afterBroker))
-                ((IBrokerInternal<T>) afterBroker).Invoke(sender, in args);
+                afterBroker.InvokeInternal(sender, in args);
         }
 
         void IUnsubscriptable<IBroker<T>.Delegate>.Unsubscribe(IBroker<T>.Delegate listener)

@@ -76,7 +76,7 @@ namespace HierarchicalBroker
                 return;
             }
             if (after.TryGetTarget(out var afterBroker))
-                ((IBrokerInternal<T>) afterBroker).Invoke(sender, in args);
+                afterBroker.InvokeInternal(sender, in args);
         }
 
         void IUnsubscriptable<IBeforeBroker<T>.Delegate>.Unsubscribe(IBeforeBroker<T>.Delegate @delegate)
