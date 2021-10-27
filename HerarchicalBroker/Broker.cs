@@ -17,7 +17,7 @@ namespace HierarchicalBroker
             {
                 if (attr is BrokerLogger mediatorLoggingAttribute)
                 {
-                    if (mediatorLoggingAttribute.LoggerType.IsAssignableTo(typeof(IBrokerLogger<T>)))
+                    if (typeof(IBrokerLogger<T>).IsAssignableFrom(mediatorLoggingAttribute.LoggerType))
                     {
                         Logger = Activator.CreateInstance(mediatorLoggingAttribute.LoggerType) as IBrokerLogger<T>;
                         LoggedEvents = mediatorLoggingAttribute.LoggedEvents;
@@ -110,7 +110,4 @@ namespace HierarchicalBroker
             subscribers -= listener;
         }
     }
-
-
-
 }
