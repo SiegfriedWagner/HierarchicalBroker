@@ -1,4 +1,4 @@
-﻿namespace HierarchicalBrokerTests
+﻿namespace HierarchiBrokerTests
 {
     public static class Handlers<T>
     {

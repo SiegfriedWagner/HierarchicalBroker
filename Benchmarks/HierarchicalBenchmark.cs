@@ -1,8 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using BenchmarkDotNet.Attributes;
-using HierarchicalBroker;
-using HierarchicalBroker.Interfaces;
+using HierarchicBroker;
+using HierarchicBroker.Interfaces;
+#pragma warning disable CS0169
 
 namespace Benchmarks
 {
@@ -33,7 +34,17 @@ namespace Benchmarks
             private Int64 int7;
             private Int64 int8;
         }
-
+        public readonly struct BigReadonlyStructArgs : IEventArgs
+        {
+            private readonly Int64 int1;
+            private readonly Int64 int2;
+            private readonly Int64 int3;
+            private readonly Int64 int4;
+            private readonly Int64 int5;
+            private readonly Int64 int6;
+            private readonly Int64 int7;
+            private readonly Int64 int8;
+        }
         public class BigClassArgs : IEventArgs
         {
             private Int64 int1;
@@ -88,6 +99,16 @@ namespace Benchmarks
             disposables.Add(Broker<BigStructArgs>.After.After.Subscribe(Handlers<BigStructArgs>.EmptyHandler));
         }
 
+        [GlobalSetup(Target = nameof(BenchmarkBigReadonlyStruct))]
+        public void SetUpBigReadOnlyStruct()
+        {
+            List<IDisposable> disposables = new List<IDisposable>();
+            disposables.Add(Broker<BigReadonlyStructArgs>.Subscribe(Handlers<BigReadonlyStructArgs>.EmptyHandler));
+            disposables.Add(Broker<BigReadonlyStructArgs>.After.Subscribe(Handlers<BigReadonlyStructArgs>.EmptyHandler));
+            disposables.Add(Broker<BigReadonlyStructArgs>.After.After.Before.Subscribe(Handlers<BigReadonlyStructArgs>.EmptyCancelingHandler));
+            disposables.Add(Broker<BigReadonlyStructArgs>.After.After.Subscribe(Handlers<BigReadonlyStructArgs>.EmptyHandler));
+        }
+
         [GlobalSetup(Target = nameof(BenchmarkOneCallEventInvoke))]
         public void SetUpOneCallEventInvoke()
         {
@@ -114,6 +135,7 @@ namespace Benchmarks
             var args = new EmptyEventArgsStruct();
             Broker<EmptyEventArgsStruct>.Invoke(null, args);
         }
+
         
         [Benchmark]
         public void BenchmarkEmptyClass()
@@ -136,6 +158,13 @@ namespace Benchmarks
             Broker<BigStructArgs>.Invoke(null, args);
         }
         
+
+        [Benchmark]
+        public void BenchmarkBigReadonlyStruct()
+        {
+            var args = new BigReadonlyStructArgs();
+            Broker<BigReadonlyStructArgs>.Invoke(null, args);
+        }
         [Benchmark]
         public void BenchmarkCreatedClass() => Broker<EmptyEventArgsClass>.Invoke(null, EmptyInstance);
 

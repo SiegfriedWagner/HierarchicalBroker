@@ -1,10 +1,10 @@
 using System;
 using System.Collections.Generic;
-using HierarchicalBroker;
-using HierarchicalBroker.Interfaces;
+using HierarchicBroker;
+using HierarchicBroker.Interfaces;
 using NUnit.Framework;
 
-namespace HierarchicalBrokerTests
+namespace HierarchiBrokerTests
 {
     public class Tests
     {

@@ -1,15 +1,15 @@
 ﻿using System;
-using HierarchicalBroker.Interfaces;
+using HierarchicBroker.Interfaces;
 
-namespace HierarchicalBroker
+namespace HierarchicBroker
 {
     internal class Subscription<T> : IDisposable
     {
         private T element;
-        private IUnsubscriptable<T> owner;
-        private bool disposed = false;
+        private IUnsubscribable<T> owner;
+        private bool disposed;
 
-        public Subscription(IUnsubscriptable<T> owner, T element)
+        public Subscription(IUnsubscribable<T> owner, T element)
         {
             this.element = element;
             this.owner = owner;
@@ -27,8 +27,8 @@ namespace HierarchicalBroker
             if (disposing)
                 GC.SuppressFinalize(this);
             owner.Unsubscribe(element);
-            element = default;
-            owner = default;
+            element = default!;
+            owner = default!;
         }
         public void Dispose() => Dispose(true);
     }

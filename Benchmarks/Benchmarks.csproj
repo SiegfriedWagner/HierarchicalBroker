@@ -10,7 +10,7 @@
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\HerarchicalBroker\HerarchicalBroker.csproj" />
+      <ProjectReference Include="..\HerarchicBroker\HerarchicBroker.csproj" />
     </ItemGroup>
 
 </Project>

@@ -1,5 +1,4 @@
 ﻿using BenchmarkDotNet.Running;
-using HierarchicalBroker.Interfaces;
 
 namespace Benchmarks
 {

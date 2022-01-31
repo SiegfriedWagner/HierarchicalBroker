@@ -1,17 +1,18 @@
 ﻿using System;
-using HierachicalBroker.Logging;
-using HierarchicalBroker.Interfaces;
+using HierarchicBroker.Interfaces;
+using HierarchicBroker.Logging;
 
-namespace HierarchicalBroker
+namespace HierarchicBroker
 {
-    internal sealed class BeforeBroker<T> : IBeforeBroker<T>, IUnsubscriptable<IBeforeBroker<T>.Delegate>
+    internal sealed class BeforeBroker<T> : IBeforeBroker<T>, IUnsubscribable<IBeforeBroker<T>.Delegate>
         where T : IEventArgs
     {
-        private WeakReference<BeforeBroker<T>> before = new WeakReference<BeforeBroker<T>>(null);
-        private WeakReference<Broker<T>> after = new WeakReference<Broker<T>>(null);
+        private WeakReference<BeforeBroker<T>> before = new WeakReference<BeforeBroker<T>>(null!);
+        private WeakReference<Broker<T>> after = new WeakReference<Broker<T>>(null!);
         private IBeforeBroker<T>.Delegate? subscribers;
         private readonly string identifier;
-        private object parent;
+        // ReSharper disable once NotAccessedField.Local
+        private object parent; // it's important to hold parent reference as it probably is a weak reference
 
         internal BeforeBroker(string identifier, object parent)
         {
@@ -31,13 +32,11 @@ namespace HierarchicalBroker
         {
             get
             {
-                BeforeBroker<T> beforeBroker;
-                if (!before.TryGetTarget(out beforeBroker))
+                if (!before.TryGetTarget(out var beforeBroker))
                 {
                     beforeBroker = new BeforeBroker<T>(identifier + "_before", this);
                     before = new WeakReference<BeforeBroker<T>>(beforeBroker);
                 }
-
                 return beforeBroker;
             }
         }
@@ -46,8 +45,7 @@ namespace HierarchicalBroker
         {
             get
             {
-                Broker<T> afterBroker;
-                if (!after.TryGetTarget(out afterBroker))
+                if (!after.TryGetTarget(out var afterBroker))
                 {
                     afterBroker = new Broker<T>(identifier + "_after", this);
                     after = new WeakReference<Broker<T>>(afterBroker);
@@ -57,7 +55,7 @@ namespace HierarchicalBroker
             }
         }
 
-        public void Invoke(object sender, in T args, ref bool cancel)
+        internal void Invoke(object sender, in T args, ref bool cancel)
         {
             if (cancel)
                 return;
@@ -79,7 +77,7 @@ namespace HierarchicalBroker
                 afterBroker.InvokeInternal(sender, in args);
         }
 
-        void IUnsubscriptable<IBeforeBroker<T>.Delegate>.Unsubscribe(IBeforeBroker<T>.Delegate @delegate)
+        void IUnsubscribable<IBeforeBroker<T>.Delegate>.Unsubscribe(IBeforeBroker<T>.Delegate @delegate)
         {
             if ((Broker<T>.LoggedEvents & LoggedEvents.Unsubscribe) == LoggedEvents.Unsubscribe)
                 Broker<T>.Logger?.LogUnsubscribe(identifier, @delegate);

@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace HierachicalBroker.Logging
+namespace HierarchicBroker.Logging
 {
     [Flags]
     public enum LoggedEvents
@@ -8,8 +8,8 @@ namespace HierachicalBroker.Logging
         None = 0,
         Subscribe = 1,
         Invoke = 2,
-        Unsubscribe = 3,
-        CancelInvoke = 4, 
+        Unsubscribe = 4,
+        CancelInvoke = 8, 
         All = Subscribe | Invoke | Unsubscribe | CancelInvoke
     }
 }

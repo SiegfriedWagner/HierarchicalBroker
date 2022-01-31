@@ -1,10 +1,11 @@
 ﻿using System.Linq;
-using HierachicalBroker.Logging;
-using HierarchicalBroker;
-using HierarchicalBroker.Interfaces;
+using HierarchiBrokerTests;
+using HierarchicBroker;
+using HierarchicBroker.Interfaces;
+using HierarchicBroker.Logging;
 using NUnit.Framework;
 
-namespace HierarchicalBrokerTests
+namespace HierarchicBrokerTests
 {
     public class BrokerLoggingTest
     {

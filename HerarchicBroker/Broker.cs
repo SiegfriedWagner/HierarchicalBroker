@@ -1,13 +1,12 @@
 ﻿using System;
 using System.Reflection;
-using HierachicalBroker.Logging;
-using HierarchicalBroker.Logging;
-using HierarchicalBroker.Interfaces;
+using HierarchicBroker.Interfaces;
+using HierarchicBroker.Logging;
 
-namespace HierarchicalBroker
+namespace HierarchicBroker
 {
 
-    public sealed class Broker<T> : IBroker<T>, IUnsubscriptable<IBroker<T>.Delegate>
+    public sealed class Broker<T> : IBroker<T>, IUnsubscribable<IBroker<T>.Delegate>
         where T : IEventArgs
     {
         static Broker()
@@ -17,7 +16,7 @@ namespace HierarchicalBroker
             {
                 if (attr is BrokerLogger mediatorLoggingAttribute)
                 {
-                    if (mediatorLoggingAttribute.LoggerType.IsAssignableTo(typeof(IBrokerLogger<T>)))
+                    if (typeof(IBrokerLogger<T>).IsAssignableFrom(mediatorLoggingAttribute.LoggerType))
                     {
                         Logger = Activator.CreateInstance(mediatorLoggingAttribute.LoggerType) as IBrokerLogger<T>;
                         LoggedEvents = mediatorLoggingAttribute.LoggedEvents;
@@ -27,12 +26,14 @@ namespace HierarchicalBroker
         }                                     
 
         internal static readonly IBrokerLogger<T>? Logger;
-        internal static readonly LoggedEvents LoggedEvents = LoggedEvents.None;
-        private object parent;
-        private WeakReference<BeforeBroker<T>> before = new WeakReference<BeforeBroker<T>>(null);
-        private WeakReference<Broker<T>> after = new WeakReference<Broker<T>>(null);
+        // ReSharper disable once StaticMemberInGenericType
+        internal static readonly LoggedEvents LoggedEvents = LoggedEvents.None; // every concrete type of Broker should have its own LoggedEvents flag
+        // ReSharper disable once NotAccessedField.Local
+        private object parent; // it's important to hold parent reference as it probably is a weak reference
+        private WeakReference<BeforeBroker<T>> before = new WeakReference<BeforeBroker<T>>(null!);
+        private WeakReference<Broker<T>> after = new WeakReference<Broker<T>>(null!);
         private IBroker<T>.Delegate? subscribers;
-        private static readonly Broker<T> root = new Broker<T>(typeof(T).Name, null);
+        private static readonly Broker<T> Root = new Broker<T>(typeof(T).Name, null!);
         private readonly string identifier;
         internal Broker(string identifier, object parent)
         {
@@ -48,15 +49,14 @@ namespace HierarchicalBroker
         }
         public static IDisposable Subscribe(IBroker<T>.Delegate @delegate)                                            
         {
-            return ((IBroker<T>)root).Subscribe(@delegate);
+            return ((IBroker<T>)Root).Subscribe(@delegate);
         }
 
         IBeforeBroker<T> IBroker<T>.Before
         {
             get
             {
-                BeforeBroker<T> beforeBroker;
-                if (!before.TryGetTarget(out beforeBroker))
+                if (!before.TryGetTarget(out var beforeBroker))
                 {
                     beforeBroker = new BeforeBroker<T>(identifier + "_before", this);
                     before = new WeakReference<BeforeBroker<T>>(beforeBroker);
@@ -69,8 +69,7 @@ namespace HierarchicalBroker
         {
             get
             {
-                Broker<T> afterBroker;
-                if (!after.TryGetTarget(out afterBroker))
+                if (!after.TryGetTarget(out var afterBroker))
                 {
                     afterBroker = new Broker<T>(identifier + "_after", this);
                     after = new WeakReference<Broker<T>>(afterBroker);
@@ -79,14 +78,14 @@ namespace HierarchicalBroker
             }
         }
 
-        public static IBeforeBroker<T> Before => ((IBroker<T>) root).Before;
+        public static IBeforeBroker<T> Before => ((IBroker<T>) Root).Before;
 
-        public static IBroker<T> After => ((IBroker<T>) root).After;
+        public static IBroker<T> After => ((IBroker<T>) Root).After;
         public static void Invoke(object sender, T args)
         {
             if ((LoggedEvents & LoggedEvents.Invoke) == LoggedEvents.Invoke)
-                Logger?.LogInvoke(root.identifier, sender, in args);
-            root.InvokeInternal(sender, in args); 
+                Logger?.LogInvoke(Root.identifier, sender, in args);
+            Root.InvokeInternal(sender, in args); 
         }
 
         public void InvokeInternal(object sender, in T args)
@@ -103,7 +102,7 @@ namespace HierarchicalBroker
                 afterBroker.InvokeInternal(sender, in args);
         }
 
-        void IUnsubscriptable<IBroker<T>.Delegate>.Unsubscribe(IBroker<T>.Delegate listener)
+        void IUnsubscribable<IBroker<T>.Delegate>.Unsubscribe(IBroker<T>.Delegate listener)
         {
             if ((LoggedEvents & LoggedEvents.Unsubscribe) == LoggedEvents.Unsubscribe)
                 Logger?.LogUnsubscribe(identifier, listener);

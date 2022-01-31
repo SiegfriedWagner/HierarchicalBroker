@@ -1,13 +1,17 @@
 ﻿using System;
-using HierachicalBroker.Logging;
-using HierarchicalBroker.Logging;
 
-namespace HierarchicalBroker
+namespace HierarchicBroker.Logging
 {
-    [AttributeUsage(validOn: AttributeTargets.Struct | AttributeTargets.Class, AllowMultiple = false)]
+    [AttributeUsage(AttributeTargets.Struct | AttributeTargets.Class)]
     public class BrokerLogger : Attribute
     {
+        /// <summary>
+        /// Type of logger. Must inherit form <see cref="IBrokerLogger{T}"/>
+        /// </summary>
         public Type LoggerType { get; }
+        /// <summary>
+        /// Flags marking which events should be passed to logger
+        /// </summary>
         public LoggedEvents LoggedEvents { get;  }= LoggedEvents.All;
         public BrokerLogger(Type loggerClass)
         {

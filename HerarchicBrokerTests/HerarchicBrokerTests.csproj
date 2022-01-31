@@ -5,7 +5,7 @@
 
         <IsPackable>false</IsPackable>
 
-        <RootNamespace>HierarchicalBrokerTests</RootNamespace>
+        <RootNamespace>HierarchicBrokerTests</RootNamespace>
     </PropertyGroup>
 
     <ItemGroup>
@@ -16,7 +16,7 @@
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\HerarchicalBroker\HerarchicalBroker.csproj" />
+      <ProjectReference Include="..\HerarchicBroker\HerarchicBroker.csproj" />
     </ItemGroup>
 
 </Project>

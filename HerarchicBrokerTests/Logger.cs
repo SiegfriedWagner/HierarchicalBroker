@@ -1,10 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
-using HierarchicalBroker.Logging;
+using HierarchicBroker.Interfaces;
+using HierarchicBroker.Logging;
 
-namespace HierarchicalBrokerTests
+namespace HierarchiBrokerTests
 {
-    public class Logger<T> : IBrokerLogger<T>
+    public class Logger<T> : IBrokerLogger<T> where T : IEventArgs
     {
         public static Logger<T> LastInstance { get; private set; }
 
