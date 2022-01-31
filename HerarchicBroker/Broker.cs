@@ -109,7 +109,4 @@ namespace HierarchicBroker
             subscribers -= listener;
         }
     }
-
-
-
 }
